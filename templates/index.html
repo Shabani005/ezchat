@@ -1,9 +1,39 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<input id="user">
-<button id="sendtolmst">send</button>
-<p id="lmstresponse"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+        
+        <div class="input-wrapper">
+            <div class="model-selector-container">
+                <select id="model-selector" class="model-selector">
+                    <option value="" disabled selected>Select a model</option>
+                    <!-- Models will be loaded here -->
+                </select>
+            </div>
+            <div class="chat-input">
+                <input id="user" placeholder="Message AI...">
+                <button id="sendtolmst">Send</button>
+            </div>
+        </div>
+        
+        <button id="debug-toggle" class="debug-toggle">Debug</button>
+        
+        <div class="debug-panel hidden" id="debug-panel">
+            <button id="getmodels">Refresh Models</button>
+            <div id="lmstresponse" class="response-box"></div>
+            <div id="modelsresponse" class="response-box"></div>
+        </div>
+    </div>
 
-<button id="getmodels">get models</button>
-<p id="modelsresponse">test!</p>
-
-<script src="{{ url_for('static', filename='chat.js') }}"></script>
+    <script src="{{ url_for('static', filename='chat.js') }}"></script>
+</body>
+</html>
