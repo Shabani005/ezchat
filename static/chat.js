@@ -1,73 +1,44 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const chatMessages = document.getElementById('chat-messages');
-    const userInput = document.getElementById('user');
-    const sendButton = document.getElementById('sendtolmst');
-    const modelsButton = document.getElementById('getmodels');
+document.getElementById('sendtolmst').addEventListener('click', async function() {
+    const userInput = document.getElementById('user').value;
+    const lmstResponseElement = document.getElementById('lmstresponse');
 
-    function addMessage(content, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
-        messageDiv.textContent = content;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function sendMessage() {
-        const message = userInput.value.trim();
-        if (!message) return;
-
-        // Add user message to chat
-        addMessage(message, true);
-        userInput.value = '';
-
-        // Send to server
-        fetch('/chat', {
+    try {
+        const response = await fetch('/', { // Assuming your Flask route is at '/'
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: message })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                addMessage('Error: ' + data.error);
-            } else {
-                addMessage(data.response);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            addMessage('Error: Failed to send message');
+            body: JSON.stringify({ message: userInput }),
         });
-    }
 
-    // Send message on button click
-    sendButton.addEventListener('click', sendMessage);
-
-    // Send message on Enter key
-    userInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    });
 
-    // Get models button
-    modelsButton.addEventListener('click', function() {
-        fetch('/models')
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                addMessage('Error: ' + data.error);
-            } else {
-                addMessage('Available models: ' + data.models.join(', '));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            addMessage('Error: Failed to fetch models');
-        });
-    });
+        const data = await response.json();
+        lmstResponseElement.textContent = JSON.stringify(data); // Display the API response
+    } catch (error) {
+        console.error('Error sending message:', error);
+        lmstResponseElement.textContent = 'Error sending message: ' + error.message;
+    }
+});
+
+document.getElementById('getmodels').addEventListener('click', async function() {
+    const modelsResponseElement = document.getElementById('modelsresponse');
+
+    try {
+        const response = await fetch('http://localhost:5555/v1/models');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        modelsResponseElement.textContent = JSON.stringify(data);
+    } catch (error) {
+        console.error('Error fetching models:', error);
+        modelsResponseElement.textContent = 'Error fetching models: ' + error.message;
+    }
 });
 
 console.log('chat.js loaded');
