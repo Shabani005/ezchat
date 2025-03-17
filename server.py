@@ -29,7 +29,7 @@ def get_response():
         response = Chat().get_response(model, message)
         return jsonify(response)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error.": str(e)}), 500
 
 if __name__ == '__main__':
     flask_chat.run(port=5555, debug=True)
